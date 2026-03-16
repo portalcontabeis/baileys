@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  baileys:
+    build: .
+    container_name: baileys-api
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./auth:/app/auth
+    environment:
+      - PORT=3002
+      - API_KEY=${API_KEY:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O-", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
