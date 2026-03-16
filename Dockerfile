@@ -18,6 +18,6 @@ RUN mkdir -p /app/auth
 EXPOSE 3002
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-  CMD wget -q -O- http://localhost:3002/health || exit 1
+  CMD wget -q -O- http://127.0.0.1:3002/health || exit 1
 
 CMD ["node", "src/server.js"]
