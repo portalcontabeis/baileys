@@ -4,17 +4,28 @@ services:
   baileys:
     build: .
     container_name: baileys-api
-    ports:
-      - "3002:3002"
     volumes:
       - ./auth:/app/auth
     environment:
       - PORT=3002
       - API_KEY=${API_KEY:-}
     restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.baileys.rule=Host(`wpp.webcontabeis.com.br`)"
+      - "traefik.http.routers.baileys.entrypoints=websecure"
+      - "traefik.http.routers.baileys.tls.certresolver=letsencrypt"
+      - "traefik.http.services.baileys.loadbalancer.server.port=3002"
+      - "traefik.docker.network=proxy"
     healthcheck:
       test: ["CMD", "wget", "-q", "-O-", "http://localhost:3002/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 90s
+
+networks:
+  proxy:
+    external: true
